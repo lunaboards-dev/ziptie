@@ -1,3 +1,4 @@
+local lzss = ...
 --#include "src/defines.lua"
 --#include "src/config.lua"
 --#include "src/microtel/init.lua"
@@ -27,7 +28,8 @@ ziptie = {
 			config[id] = val
 			cfg_save()
 		end
-	}
+	},
+	decompress = lzss
 }
 
 log("ziptie 0.1")
