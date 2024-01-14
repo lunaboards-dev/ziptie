@@ -1,6 +1,6 @@
 # Ziptie BIOS v0.1
 
-_It's like duct tape but I can use to tow my car._
+_It's like duct tape but I can use it to tow my car._
 
 A small BIOS that allows booting off of multiple different types of media.
 
