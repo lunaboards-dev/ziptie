@@ -29,14 +29,15 @@ ziptie = {
 			cfg_save()
 		end
 	},
-	decompress = lzss
+	decompress = lzss,
+	realComputerPullSignal = realComputerPullSignal
 }
 
 log("ziptie 0.1")
 local bt = config[3--[[BOOT_TYPE]]]
 bt = bt and bt:byte()
 if bt == 1 then
-	frequest(config[1--[[BOOT_ADDRESS]]], sunpack("H", config[11--[[BOOT_PORT]]]), config[2--[[BOOT_PATH]]])
+	frboot(config[1--[[BOOT_ADDRESS]]], sunpack("H", config[11--[[BOOT_PORT]]]), config[2--[[BOOT_PATH]]])
 elseif bt == 0 or not bt then
 	local addr = b2a(config[1--[[BOOT_ADDRESS]]])
 	local ct = cpnt.type(addr)

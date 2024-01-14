@@ -1,4 +1,4 @@
-local net_port,net_hostname,net_route,net_hook, net_send=4096,config[12] or ssub(com.address(),1,8),true,{}
+local net_port,net_hostname,net_route,net_hook,realComputerPullSignal, net_send=4096,config[12] or ssub(com.address(),1,8),true,{},com.pullSignal
 
 do
 local modems,packetQueue,packetCache,routeCache = {},{},{},{}
@@ -44,8 +44,6 @@ local function checkCache(packetID)
  end
  return true--1>0--true
 end
-
-local realComputerPullSignal = com.pullSignal
 function com.pullSignal(t)
  local eventTab = {realComputerPullSignal(t)}
  for k,v in _pairs(net_hook) do

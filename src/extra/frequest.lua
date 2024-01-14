@@ -2,13 +2,13 @@ local function frequest(host, port, path)
 	local sock, status, s = net_open(host, port), "", ""
 	sock:w("t"..path.."\n")
 	while status == "" do
-		com_pullSignal(0.5)
+		com_pullSignal(0)
 		status = sock:r(1)
 	end
-	die_assert(status ~= "y", "not a file!")
+	die_assert(status == "y", "not a file!")
 	status = ""
 	repeat
-		com_pullSignal(0.5)
+		com_pullSignal(0)
 		s = sock:r(1024)
 		status = status .. s
 	until sock.state == "c" and s == ""
