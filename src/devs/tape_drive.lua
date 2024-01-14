@@ -1,4 +1,4 @@
-function dev.tape(addr)
+function dev.tape_drive(addr)
 	log("tape: "..addr)
 	local tape = cproxy(addr)
 	local size = tape.getSize()
