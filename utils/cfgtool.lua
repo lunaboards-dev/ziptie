@@ -18,7 +18,8 @@ parser:mutex(
 	parser:flag("-i --int", "Specifies an int value"):action(set_value),
 	parser:flag("-l --long", "Specifies a long value"):action(set_value),
 	parser:flag("-e --enum", "Specifies an enumerated value"):action(set_value),
-	parser:flag("-x --hex", "Specifies a hex value"):action(set_value)
+	parser:flag("-x --hex", "Specifies a hex value"):action(set_value),
+	parser:flag("--enable", "Enables a boolean setting (empty value)"):action(set_value)
 )
 
 parser:option("--force-endian", "Forces endianness."):choices({"little", "big"}):count("?")
@@ -134,6 +135,11 @@ local types = {
 	end, function(v)
 		if #v == 0 then return "" end
 		return string.format(string.rep(_x, #v), v:byte(1, #v))
+	end),
+	enable = vtype(function(v)
+		return ""
+	end, function(v)
+		return "<set>"
 	end)
 }
 
@@ -204,7 +210,7 @@ end
 if args.set or args.get then
 	assert_die(args.type, "need a type for set or get!")
 end
-if args.set then
+if args.set and args.type ~= "enable" then
 	assert_die(args.value, "no value!")
 end
 local id = args.set or args.get or args.remove
@@ -272,4 +278,32 @@ elseif args.get then
 		v = types[args.type].dec(v)
 	end
 	print_value(id, v)
+elseif args.dump then
+	print("DUMP (types are a guess)")
+	local keyl = {}
+	for k, v in pairs(cfg) do
+		table.insert(keyl, k)
+	end
+	table.sort(keyl)
+	for i=1, #keyl do
+		local k = keyl[i]
+		local val = cfg[k]
+		if #val == 1 then -- byte
+			print_value(k, string.format("0x%.1x (byte)", types.byte.dec(val)))
+		elseif #val == 2 then -- short
+			print_value(k, string.format("0x%.2x (short)", types.short.dec(val)))
+		elseif #val == 4 then -- int
+			print_value(k, string.format("0x%.4x (int)", types.int.dec(val)))
+		elseif #val == 8 then -- byte
+			print_value(k, string.format("0x%.8x (long)", types.long.dec(val)))
+		elseif #val == 16 then -- byte
+			print_value(k, string.format("%s (UUID)", types.uuid.dec(val)))
+		elseif #val == 0 then
+			print_value(k, "<set>")
+		elseif val:find("%c") then
+			print_value(k, string.format("%s (unknown)", types.hex.dec(val)))
+		else
+			print_value(k, string.format("%q (string)", val))
+		end
+	end
 end
