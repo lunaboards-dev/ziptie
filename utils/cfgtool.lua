@@ -29,7 +29,7 @@ parser:argument("value", "Value to write"):args("?")
 
 local args = parser:parse()
 
-for k,v in pairs(args) do print(k, v) end
+--for k,v in pairs(args) do print(k, v) end
 --#region Defines
 
 local function die(err, exit)
