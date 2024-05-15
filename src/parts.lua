@@ -7,7 +7,7 @@ local function pdecode(hdr, fields, ...)
 	return function(dat)
 		local off, out = 0, {}
 		while off < #dat do
-			local list = tbl.pack(sunpack(hdr, off))
+			local list = tbl.pack(sunpack(hdr, dat, off))
 			for i=1, #fields do list[ssub(fields, i,i)] = list[i] end
 			local nxt = tremove(list)
 			tinsert(out, list)

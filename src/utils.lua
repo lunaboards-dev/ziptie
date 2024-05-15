@@ -43,7 +43,7 @@ local function boot(code, path)
 	function com.setBootAddress(addr)
 		ziptie.cfg.set(1, a2b(addr))
 	end
-	load(sgsub(code, "\0+$", ""), "="..path)()
+	die_assert(load(sgsub(code, "\0+$", ""), "="..path))()
 end
 
 local function get_boot(addr, read, cap, div)
