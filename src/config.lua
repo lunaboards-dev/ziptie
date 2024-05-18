@@ -7,7 +7,7 @@ local function cfg_read(dat, tbl)
 		id = sbyte(dat, p)
 		t = id & 63
 		if id & 64 > 0 then
-			t = t | sbyte(dat, p+1) << 8
+			t = t | sbyte(dat, p+1) << 6
 			p = p + 1
 		end
 		len = sbyte(dat, p+1)
@@ -52,7 +52,6 @@ local function cfg_write(cfg, ...)
 			--write_blk()
 			blocks[pos] = schar(count) .. blocks[pos]
 			pos = pos + 1
-			count = 0
 
 			die_assert(args[pos], "out of room for config!")
 			blocks[pos] = ov

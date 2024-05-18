@@ -28,22 +28,22 @@ end
 
 local function die(msg)
 	log("panic!: "..msg)
-	while true do com_pullSignal() end
+	while true do pullsignal() end
 end
 
 local function die_assert(val, msg)
 	if not val then die(msg) end return val
 end
 
-local function boot(code, path)
+local function boot(code, path, addr)
 	function com.getBootAddress()
-		return b2a(ziptie.cfg.get(1))
+		return addr or b2a(ziptie.cfg.get(1))
 	end
 
 	function com.setBootAddress(addr)
 		ziptie.cfg.set(1, a2b(addr))
 	end
-	die_assert(load(sgsub(code, "\0+$", ""), "="..path))()
+	return die_assert(load(sgsub(code, "\0+$", ""), "="..path))
 end
 
 local function get_boot(addr, read, cap, div)
@@ -52,7 +52,7 @@ local function get_boot(addr, read, cap, div)
 		local part = parts[i]
 		if part.t == "boot" or part.t == "BOOTCODE" then
 			local buf = drive_read(addr, read, part.s, part.S)
-			boot(buf, "(boot)")
+			return boot(buf, "(boot)", addr)
 		end
 	end
 end

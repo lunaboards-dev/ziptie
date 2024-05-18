@@ -10,7 +10,8 @@ function dev.tape_drive(addr)
 	for i=1, #parts do
 		if parts[i].t == "boot" then
 			tape.seek(((parts[i].s-1)*512)-tape.getPosition())
-			boot(tape.read((parts[i].S)*512), "(boot)")
+			return boot(tape.read((parts[i].S)*512), "(boot)", addr)
 		end
 	end
+	return nil, "timeout"
 end

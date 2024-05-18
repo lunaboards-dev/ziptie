@@ -16,7 +16,7 @@
 ]]
 
 local str, cpnt, tbl, com, _tonumber, _pairs, _nil = string, component, table, computer, tonumber, pairs
-local ssub, sbyte, cproxy, cinvoke, clist, sgsub, sunpack, srep, sformat, tinsert, tremove, schar, cuptime, tunpack =
-str.sub, str.byte, cpnt.proxy, cpnt.invoke, cpnt.list, str.gsub, str.unpack, str.rep, str.format, tbl.insert, tbl.remove, str.char, com.uptime, tbl.unpack
+local ssub, sbyte, cproxy, cinvoke, clist, sgsub, sunpack, srep, sformat, tinsert, tremove, schar, cuptime, tunpack, pullsignal =
+str.sub, str.byte, cpnt.proxy, cpnt.invoke, cpnt.list, str.gsub, str.unpack, str.rep, str.format, tbl.insert, tbl.remove, str.char, com.uptime, tbl.unpack, com.pullSignal
 
 local @[{table.concat(kl, ",")}] = @[{table.concat(vl, ",")}]

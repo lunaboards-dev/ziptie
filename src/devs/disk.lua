@@ -12,5 +12,5 @@ function dev.drive(addr)
 			boot(buf, "(boot)")
 		end
 	end]=]
-	get_boot(addr, "readSector", "getCapacity", 512)
+	return get_boot(addr, "readSector", "getCapacity", 512)
 end

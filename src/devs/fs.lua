@@ -1,7 +1,8 @@
-function dev.filesystem(addr)
-	local path, buffer, prox = config[2] or "init.lua", "", cproxy(addr)
-	log(sformat("fs: %s:/%s", addr:sub(1, 8), path))
+function dev.filesystem(addr, path)
+	local path, buffer, prox = path or "init.lua", "", cproxy(addr)
+	log(sformat("fs: %s:/%s", ssub(addr, 1, 8), path))
 	local h = prox.open(path, "r")
+	if not h then return nil, "not found" end
 	while true do
 		local c = prox.read(h, math.huge)
 		if not c or c == "" then
@@ -9,5 +10,5 @@ function dev.filesystem(addr)
 		end
 		buffer = buffer .. c
 	end
-	boot(buffer, path)
+	return boot(buffer, path, addr)
 end
