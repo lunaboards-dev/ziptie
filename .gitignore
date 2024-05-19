@@ -1,3 +1,5 @@
 *.bin
 *.bios
 test/*.lua
+test/floppy/
+test/

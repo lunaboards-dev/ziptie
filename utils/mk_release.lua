@@ -1,0 +1,7 @@
+os.execute("rm -r test")
+os.execute("mkdir test")
+os.execute("luacomp src/init.lua -O test/debug.lua")
+os.execute("luacomp bios.lua -O ziptie.bios")
+os.execute("cp -r utils/install_floppy test/floppy")
+os.execute("cp ziptie.bios test/floppy/ziptie.bin")
+os.execute("cd test/floppy; find | sed \"s/\\.\\///\" | cpio -oF ../install.cpio")

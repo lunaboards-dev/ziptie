@@ -176,7 +176,7 @@ xpcall(function()
 		gset(ox+bc+2, oy+3, buttons.ok)
 		gset(ox+bc+4+#buttons.ok, oy+3, buttons.cancel)]]
 		local bc = (pwidth-(#buttons.ok+#buttons.cancel+2))//2
-		local i = input(ox+2, oy+1, pwidth, ".", dev)
+		local i = input(ox+2, oy+1, pwidth, "[^%c]", dev)
 		local val
 		button(ox+bc+2, oy+3, buttons.ok, function()
 			clear_menu()
@@ -336,12 +336,12 @@ xpcall(function()
 	local keys = {
 		{3, "type", function(b) return b:byte()+1 end, function(v) return string.char(v-1) end},
 		{1, "address", function(b, st)
-			if check_dis(st, "L") then
+			if kv.type == 1 then --check_dis(st, "L") then
 				return ziptie.bin2addr(b)
 			end
 			return b
 		end, function(b, st)
-			if check_dis(st, "L") then
+			if kv.type == 1 then --check_dis(st, "L") then
 				return ziptie.addr2bin(b)
 			end
 			return b
@@ -361,8 +361,11 @@ xpcall(function()
 	end
 
 	local function save_config()
+		local text = "Saving... (00/00)"
+		local ox, oy = window(#text+4, 5, "")
 		for i=1, #keys do
 			local key = keys[i]
+			gpu.set(ox+1, oy+1, string.format("Saving... (%.2d/%.2d)", i, #keys))
 			ziptie.cfg.set(key[1], key[4](kv[key[2]], state))
 		end
 	end
