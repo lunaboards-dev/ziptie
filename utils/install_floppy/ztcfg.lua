@@ -375,6 +375,7 @@ xpcall(function()
 		--local ox, oy = window(50, #labels*2+4, "ziptie config 0.1")
 		--gset(ox+3, oy, "Boot Type")
 		local quit
+		local sp = t1 and 1 or 2
 		while not quit do
 			local st = state
 			local items, mw1, mw2 = {}, 0, 0
@@ -384,17 +385,17 @@ xpcall(function()
 				--set_colors(dis and colors.disabled or colors.text)
 				--gset(ox+1, oy+(i*2)-1, lbl)
 				--print(key)
-				local s, iw = add(0+#lbl+4, 0+(i*2)-1)
+				local s, iw = add(0+#lbl+4, 0+(i*sp)-1)
 				if check_dis(st, depends) then disable() end
 				table.insert(items, s)
 				mw2 = math.max(iw, mw2)
 			end
 			local ww = mw1+mw2+6
-			local ox, oy = window(ww, #labels*2+4, "ziptie 0.1 config")
+			local ox, oy = window(ww, #labels*sp+4, "ziptie 0.1 config")
 			for i=1, #labels do
 				local lbl, key, depends, add = table.unpack(labels[i])
 				set_colors(check_dis(st, depends) and colors.disabled or colors.text)
-				local y = oy+(i*2)-1
+				local y = oy+(i*sp)-1
 				gset(ox+1, y, lbl)
 				items[i].x = ox+2+mw1
 				items[i].y = y
@@ -406,8 +407,8 @@ xpcall(function()
 				end
 				--print(key, items[i].x, items[i].y)
 			end
-			button(ox+1, oy+#labels*2+1, buttons.close, function() quit = true clear_menu() end)
-			button(ox+3+#buttons.close, oy+#labels*2+1, buttons.save, function()
+			button(ox+1, oy+#labels*sp+1, buttons.close, function() quit = true clear_menu() end)
+			button(ox+3+#buttons.close, oy+#labels*sp+1, buttons.save, function()
 				save_config()
 				quit = true
 				clear_menu()
