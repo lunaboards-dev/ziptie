@@ -29,6 +29,7 @@ ziptie = {
 		set = function(...)
 			local args = tbl.pack(...)
 			for i=1, #args, 2 do
+				--log(string.format("%q: %q", args[i], args[i+1]))
 				config[args[i]] = args[i+1]
 			end
 			cfg_save()

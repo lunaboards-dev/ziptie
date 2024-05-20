@@ -146,10 +146,15 @@ xpcall(function()
 		return st, #text
 	end
 
-	local function input(x, y, width, filter, def)
+	local function input(x, y, width, filter, def, cb)
 		local st = {v = def or "", x=x, y=y}
+		local last_sel
 		table.insert(menu_items, {
 			r=function(is_sel, disabled)
+				if not is_sel and last_sel and cb then
+					cb(st.v)
+				end
+				last_sel = is_sel
 				gset(st.x, st.y, st.v:sub(math.max(1, #st.v-width+1))..string.rep(" ", width-#st.v))
 			end, e = function(evt, _, key)
 				if evt == "key_down" then
@@ -361,13 +366,18 @@ xpcall(function()
 	end
 
 	local function save_config()
-		local text = "Saving... (00/00)"
+		local text = "Saving..."
 		local ox, oy = window(#text+4, 5, "")
+		local kl = {}
 		for i=1, #keys do
 			local key = keys[i]
-			gpu.set(ox+1, oy+1, string.format("Saving... (%.2d/%.2d)", i, #keys))
-			ziptie.cfg.set(key[1], key[4](kv[key[2]], state))
+			table.insert(kl, key[1])
+			table.insert(kl, key[4](kv[key[2]], state) or "")
+			--gpu.set(ox+1, oy+1, string.format("Saving... (%.2d/%.2d)", i, #keys))
+			--ziptie.cfg.set(key[1], key[4](kv[key[2]], state))
 		end
+		gpu.set(ox+1, oy+1, text)
+		ziptie.cfg.set(table.unpack(kl))
 	end
 
 	local function display_menu()
