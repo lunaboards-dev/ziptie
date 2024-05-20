@@ -40,8 +40,12 @@ local function boot(code, path, addr)
 		return addr or b2a(ziptie.cfg.get(1))
 	end
 
-	function com.setBootAddress(addr)
-		ziptie.cfg.set(1, a2b(addr))
+	function com.setBootAddress(addr, path)
+		--[[ziptie.cfg.set(1, a2b(addr))
+		if path then
+			ziptie.cfg.set()]]
+		config[1] = a2b(addr)
+		config[2] = path or "init.lua"
 	end
 	return die_assert(load(sgsub(code, "\0+$", ""), "="..path))
 end

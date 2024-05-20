@@ -65,6 +65,7 @@ end
 
 log("Writing EEPROM...")
 eeprom.set(bios)
+eeprom.setLabel("Ziptie BIOS")
 log("Writing config...")
 eeprom.setData(newcfg:save(256))
 log("Install complete! Rebooting into config...")

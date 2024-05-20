@@ -26,8 +26,11 @@ ziptie = {
 		get = function(id)
 			return config[id]
 		end,
-		set = function(id, val)
-			config[id] = val
+		set = function(...)
+			local args = tbl.pack(...)
+			for i=1, #args, 2 do
+				config[args[i]] = args[i+1]
+			end
 			cfg_save()
 		end
 	},
