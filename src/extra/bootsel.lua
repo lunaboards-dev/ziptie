@@ -9,7 +9,7 @@ local function check_bootsel()
 			if evt == "key_down" and c == 9 then
 				log("0. Continue")
 				local i = 1
-				local entries = {[0] = {function()end}}
+				local entries = {[0] = {function()return function() end end}}
 				for comp, ctype in clist() do
 					if dev[ctype] then
 						if ctype == "filesystem" and cinvoke(comp, "exists", "ztcfg.lua") then

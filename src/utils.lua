@@ -27,7 +27,9 @@ local function log(msg)
 end
 
 local function die(msg)
-	log("panic!: "..msg)
+	for line in debug.traceback("panic!: "..tostring(msg)):gmatch("[^\n\r]+") do
+		log(sgsub(line, "\t", ""))
+	end
 	while true do pullsignal() end
 end
 

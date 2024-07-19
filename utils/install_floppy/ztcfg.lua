@@ -328,7 +328,7 @@ xpcall(function()
 		{"Boot device", 				"address", 		"L", add_item(button, "<select>", function() set_kv("address", combo("Boot device", devs)) end)},
 		{"Boot address", 				"address", 		"R", add_item(button, "<select>", function() set_kv("address", prompt("Boot address", kv.address)) end)},
 		{"Minitel hostname", 			"hostname", 	"R", add_item(button, "<select>", function() set_kv("hostname", prompt("Hostname", kv.hostname)) end)},
-		{"Boot port", 					"port", 		"R", add_item(input, 5, "%n")},
+		{"Boot port", 					"port", 		"R", add_item(input, 5, "%d")},
 		{"Boot path", 					"path", 		nil, add_item(button, "<select>", function() set_kv("path", prompt("Boot path", kv.path)) end)},
 		--{"Log to network", 				"log_net", 		"R", add_item(cycle, {{"Disabled", 1}, {"Enabled", 2}}, function(v) set_kv("log_net", v) end)},
 		--{"Log to screen", 				"log_screen", 	nil, add_item(cycle, {{"Disabled", 1}, {"Enabled", 2}}, function(v) set_kv("log_screen", v) end)},
@@ -336,6 +336,7 @@ xpcall(function()
 		{"Flash config size (Blocks)",	"flash_blocks",	"f", add_item(button, "<select>", nofunc)},
 		{"Flash config size (Bytes)", 	"flash_bytes",	"X", add_item(button, "<N/A>", nofunc)},
 		{"Flash config start", 			"flash_start",	"f", add_item(button, "<select>", nofunc)},]]
+		{"Menu timeout (ms)",                "timeout",      nil, add_item(input, 4, "%d")}
 	}
 
 	local keys = {
@@ -353,7 +354,8 @@ xpcall(function()
 		end},
 		{2, "path", function(b) return b end, function(b) return b end},
 		{12, "hostname", function(b) return b end, function(b) return b end},
-		{11, "port", function(b) return tostring(string.unpack("H", b or "\0\0")) end, function(b) return string.pack("H", tonumber(b or 0)) end}
+		{11, "port", function(b) return tostring(string.unpack("H", b or "\0\0")) end, function(b) return string.pack("H", tonumber(b or 0)) end},
+		{13, "timeout", function(b) return string.format("%d", (string.unpack("f", b or "\0\0\0\0")*1000)//1) end, function(b) return string.pack("f", math.max(tonumber(b or 0), 1000)/1000) end}
 	}
 
 	local function load_config()
