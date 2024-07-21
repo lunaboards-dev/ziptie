@@ -430,6 +430,7 @@ xpcall(function()
 	end
 	-- display UI
 	load_config()
+	computer.pushSignal("dummy")
 	display_menu()
 	computer.shutdown(true)
 end, function(err)

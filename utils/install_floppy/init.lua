@@ -1,4 +1,21 @@
-local fs = component.proxy(computer.getBootAddress())
+local bootdat = ...
+local function readfile(path)
+	log("Loading "..path.."...")
+	return bootdat:get(path)
+end
+if not bootdat then
+	local fs = component.proxy(computer.getBootAddress())
+	readfile = function(path)
+		log("Loading "..path.."...")
+		local b, c = ""
+		local h = fs.open(path, "r")
+		while true do
+			c = fs.read(h, math.huge)
+			if not c or c == "" then return b end
+			b = b .. c
+		end
+	end
+end
 local eeprom = component.proxy(component.list("eeprom")())
 local gpu = component.proxy(component.list("gpu")())
 local screen = component.list("screen")()
@@ -33,17 +50,6 @@ local function log(msg)
 	gpu.copy(1, 2, w, h-1, 0, -1)
 	gpu.fill(1, h, w, 1, " ")
 	gpu.set(1, h, msg)
-end
-
-local function readfile(path)
-	log("Loading "..path.."...")
-	local b, c = ""
-	local h = fs.open(path, "r")
-	while true do
-		c = fs.read(h, math.huge)
-		if not c or c == "" then return b end
-		b = b .. c
-	end
 end
 
 local cfg = load(readfile("cfgtool.lua"))()

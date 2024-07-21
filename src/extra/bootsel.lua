@@ -28,7 +28,7 @@ local function check_bootsel()
 					evt, _, c = pullsignal()
 					if evt == "key_down" and c < 58 and c > 47 then
 						local n = entries[c - 48]
-						return die_assert(n[1](table.unpack(n, 2)))()
+						return die_assert(n[1](tunpack(n, 2)))()
 					end
 				end
 				return
