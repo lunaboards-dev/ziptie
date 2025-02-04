@@ -2,6 +2,7 @@ local p, id, len, t
 local function cfg_read(dat, tbl)
 	p, tbl = 2, tbl or {}
 	local count = sbyte(dat, 1)
+	--if not count then return tbl end
 	--while #dat < p do
 	for i=1, count do
 		id = sbyte(dat, p)
@@ -81,7 +82,8 @@ local function cfg_save()
 	end
 end
 
-local function cfg_load()
+--local function cfg_load()
+do
 	cfg_read(cinvoke(clist("eep")(), "getData"), config)
 	local addr = config[7]
 	if addr then
@@ -92,4 +94,4 @@ local function cfg_load()
 		cfg_read(info, config)
 	end
 end
-cfg_load()
+--cfg_load()

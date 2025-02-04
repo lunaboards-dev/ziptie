@@ -26,8 +26,8 @@ local function log(msg)
 	end
 end
 
-local function die(msg)
-	for line in debug.traceback("panic!: "..tostring(msg)):gmatch("[^\n\r]+") do
+local function die(msg, tb)
+	for line in (tb and msg or debug.traceback("panic!: "..tostring(msg))):gmatch("[^\n\r]+") do
 		log(sgsub(line, "\t", ""))
 	end
 	while true do pullsignal() end
@@ -35,6 +35,7 @@ end
 
 local function die_assert(val, msg)
 	if not val then die(msg) end return val
+	--return val or die(msg)
 end
 
 local function boot(code, path, addr)
@@ -57,7 +58,7 @@ local function get_boot(addr, read, cap, div)
 	local parts = die_assert(osdi_decode(cinvoke(addr, read, 1)) or mtpt_decode(cinvoke(addr, read, cinvoke(addr, cap)/div)), "no partition tables")
 	for i=1, #parts do
 		local part = parts[i]
-		if part.t == "boot" or part.t == "BOOTCODE" then
+		if part.t == "boot" or (part.t == "BOOTCODE" and ((part.f or 0) & 0x200 > 0)) then
 			local buf = drive_read(addr, read, part.s, part.S)
 			return boot(buf, "(boot)", addr)
 		end

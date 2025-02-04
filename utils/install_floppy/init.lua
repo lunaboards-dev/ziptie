@@ -1,4 +1,16 @@
 local bootdat = ...
+
+local eeprom = component.proxy(component.list("eeprom")())
+local gpu = component.proxy(component.list("gpu")())
+local screen = component.list("screen")()
+gpu.bind(screen)
+local function log(msg)
+	local w, h = gpu.getViewport()
+	gpu.copy(1, 2, w, h-1, 0, -1)
+	gpu.fill(1, h, w, 1, " ")
+	gpu.set(1, h, msg)
+end
+
 local function readfile(path)
 	log("Loading "..path.."...")
 	return bootdat:get(path)
@@ -16,10 +28,6 @@ if not bootdat then
 		end
 	end
 end
-local eeprom = component.proxy(component.list("eeprom")())
-local gpu = component.proxy(component.list("gpu")())
-local screen = component.list("screen")()
-gpu.bind(screen)
 
 local keys = {
 	boot_address = 1,
@@ -43,13 +51,6 @@ local function a2b(addr)
 		baddr = baddr .. string.char(tonumber(string.sub(addr, i, i+1), 16))
 	end
 	return baddr
-end
-
-local function log(msg)
-	local w, h = gpu.getViewport()
-	gpu.copy(1, 2, w, h-1, 0, -1)
-	gpu.fill(1, h, w, 1, " ")
-	gpu.set(1, h, msg)
 end
 
 local cfg = load(readfile("cfgtool.lua"))()

@@ -1,6 +1,7 @@
 local timeout = config[13] and sunpack("f", config[13]) or 1
 
-local function check_bootsel()
+--local function check_bootsel()
+--do
 	if gpu then
 		log("Strike Tab to enter boot menu")
 		local deadline, evt, _, c = cuptime()+timeout
@@ -35,4 +36,4 @@ local function check_bootsel()
 			end
 		end
 	end
-end
+--end
