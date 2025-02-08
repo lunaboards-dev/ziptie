@@ -9,4 +9,4 @@ c=c..g
 d=h(d..g,-4^6)end
 end
 return c end
-return assert(load(z$[[luacomp -mluamin src/init.lua | lua utils/makezbios.lua]], "=(bios)"))(z)
+return assert(load(z$[[luacomp -mluamin src/init.lua | lua utils/makezbios.lua]],"=(bios)"))(z)

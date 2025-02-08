@@ -11,17 +11,18 @@ _FLASH = {}
 --#include "src/devs/init.lua"
 -- #include "src/extra/bootsel.lua"
 
-_BIOS = "ziptie 0.1"
-_BOOT = "ziptie 0.1"
+_BIOS = "ziptie 1.0"
+_BOOT = "ziptie 1.0"
 ziptie = {
 	bin2addr = b2a,
 	addr2bin = a2b,
-	net = {
+	--[=[net = {
 		--[[send = net_send,
 		open = net_open,
 		lsend = net_lsend,]]
 		fget = frequest
-	},
+	},]=]
+	fget = frequest,
 	log = log,
 	cfg = {
 		get = function(id)
@@ -36,10 +37,14 @@ ziptie = {
 			cfg_save()
 		end
 	},
+	parts = {
+		osdi = osdi_decode,
+		mtpt = mtpt_decode,
+	},
 	decompress = lzss,
 }
 xpcall(function()
-	log("ziptie 0.1")
+	log("ziptie 1.0")
 	--check_bootsel()
 	--#include "src/extra/bootsel.lua"
 	local bt = config[3--[[BOOT_TYPE]]]
@@ -49,7 +54,7 @@ xpcall(function()
 	elseif bt == 0 or not bt then
 		local addr = b2a(config[1--[[BOOT_ADDRESS]]])
 		local ct = cpnt.type(addr)
-		die_assert(dev[ct], "unknown component type "..ct)(addr, config[2])()
+		die_assert(dev[ct], "unknown component "..ct)(addr, config[2])()
 	end
 end, function(err)
 	tb = debug.traceback(err)
