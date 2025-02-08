@@ -1,6 +1,4 @@
-# Ziptie BIOS v0.1
-
-_It's like duct tape but I can use it to tow my car._
+# Ziptie BIOS v1.0
 
 A small BIOS that allows booting off of multiple different types of media.
 
@@ -20,3 +18,44 @@ A small BIOS that allows booting off of multiple different types of media.
 | `FLASH_BYTES` | `10` | Number | Size in **bytes** of configuration storage. |
 | `BOOT_PORT` | `11` | Short | Minitel port for network boot. |
 | `HOSTNAME` | `12` | String | Minitel hostname. |
+
+## API reference
+
+### `ziptie.addr2bin(address:string):string`
+Converts a human-readable UUID to a binary UUID.
+
+### `ziptie.bin2addr(address:string):string`
+Converts a binary UUID to a human readable UUID.
+
+### `ziptie.cfg.get(id:integer):string`
+Gets the config entry at `id` and returns the raw data. Decoding must be done on your own.
+
+### `ziptie.cfg.load(data:string)`
+Loads config data to be read from. **Do not try to set config values after using `load`!**
+
+### `ziptie.cfg.set(id:integer, data:string, ...)`
+Sets the config entries at `id`, subsequent arguments are more entries. Also writes the config. **Using this after using `ziptie.cfg.load` can cause a `no space` error!.**
+
+### `ziptie.decompress(data:string):string`
+Decompresses `data` with LZSS. **Not available when using debug builds!**
+
+### `ziptie.fget(host:string, port:integer, path:string):string`
+Fetches a file from a remote server. Will cause an error if there's no modem, and will cause a panic if it's a directory.
+
+### `ziptie.log(msg:string)`
+Logs a message to the screen. Does not support line breaks.
+
+### `ziptie.parts.osdi(data:string):partition_table`
+Decodes an OSDI partition table. Returns nil if invalid or not present. You must filter out invalid partitions yourself.
+
+### `ziptie.parts.mtpt(data:string):partition_table`
+Decodes a Minitel partition table. Returns nil if invalid or not present. You must filter out invalid partitions yourself.
+
+### Type: `partition_table`
+| Field | Type | Data |
+| ----- | ---- | ---- |
+| `s` | Integer | Start sector |
+| `S` | Integer | Partition size |
+| `t` | String | Partition type |
+| `f` | Integer or nil | Partition flags. Not present on Minitel tables. |
+| `n` | String | Partition name |

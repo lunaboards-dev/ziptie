@@ -54,7 +54,7 @@ local function cfg_write(cfg, ...)
 			blocks[pos] = schar(count) .. blocks[pos]
 			pos = pos + 1
 
-			die_assert(args[pos], "out of room for config!")
+			die_assert(args[pos], "no space")
 			blocks[pos] = ov
 			count = 0
 		else

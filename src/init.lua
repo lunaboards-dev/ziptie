@@ -35,6 +35,9 @@ ziptie = {
 				config[args[i]] = args[i+1]
 			end
 			cfg_save()
+		end,
+		load = function(dat)
+			cfg_read(dat, config)
 		end
 	},
 	parts = {
