@@ -54,7 +54,8 @@ local keys = {
 	flash_size = 9,
 	flash_bytes = 10,
 	boot_port = 11,
-	hostname = 12
+	hostname = 12,
+	timeout = 13
 }
 
 local enums = {

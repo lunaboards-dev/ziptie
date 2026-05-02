@@ -48,6 +48,9 @@ ziptie = {
 }
 xpcall(function()
 	log("ziptie 1.0")
+	if _NOCFG then
+		ziptie.log("invalid config checksum")
+	end
 	--check_bootsel()
 	--#include "src/extra/bootsel.lua"
 	local bt = config[3--[[BOOT_TYPE]]]

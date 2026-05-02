@@ -1,7 +1,21 @@
+local function amx(s)
+	local r = #s
+	for i=1, r do
+		r = r * (sbyte(s, i)+i)+i
+        r = (r & 0xFF) ~ (r >> 8)
+    end
+    return r & 0xFF
+end
+
 local p, id, len, t
 local function cfg_read(dat, tbl)
-	p, tbl = 2, tbl or {}
-	local count = sbyte(dat, 1)
+	p, tbl = 4, tbl or {}
+	local count, ksum, dsum = sbyte(dat, 2), amx(ssub(dat, 2)), sbyte(dat, 1)
+	if not count or ksum ~= dsum then
+		_NOCFG = true
+		tbl[6] = clist("scr")()
+		return tbl
+	end
 	--if not count then return tbl end
 	--while #dat < p do
 	for i=1, count do
@@ -23,6 +37,7 @@ local function cfg_read(dat, tbl)
 	return tbl
 end
 
+-- @[[if false then]]
 local function cfg_write(cfg, ...)
 	local blocks, keys, args, pos, count = {""}, {}, {...}, 1, 0
 	for k in _pairs(cfg) do
@@ -49,11 +64,12 @@ local function cfg_write(cfg, ...)
 			ov = schar(ik) .. ov
 		end
 		ov = schar(k) .. ov
-		if #blocks[pos] + #ov > args[pos]-1 then
+		if #blocks[pos] + #ov > args[pos]-2 then
 			--write_blk()
 			blocks[pos] = schar(count) .. blocks[pos]
+			blocks[pos] = schar(amx(blocks[pos])) .. blocks[pos]
 			pos = pos + 1
-
+			
 			die_assert(args[pos], "no space")
 			blocks[pos] = ov
 			count = 0
@@ -63,35 +79,44 @@ local function cfg_write(cfg, ...)
 	end
 	--write_blk()
 	blocks[pos] = schar(count) .. blocks[pos]
-	pos = pos + 1
-	count = 0
+	blocks[pos] = schar(amx(blocks[pos])) .. blocks[pos]
+	--pos = pos + 1
+	--count = 0
 
 	return blocks
 end
+-- @[[else]]
+local function cfg_write(cfg)
+	local count = 0
+	for k, v in pairs(cfg) do
+
+	end
+end
+-- @[[end]]
 local config = {}
 
 local function cfg_save()
 	local blocks = cfg_write(config, 256, config[10--[[FLASH_BYTES]]])
 	cinvoke(clist("eep")(), "setData", blocks[1])
-	if blocks[2] then
+	--[=[if blocks[2] then
 		local off, bc, addr, start = 1, math.ceil(#blocks[2]/64), b2a(config[7--[[FLASH_CONFIG]]]), sunpack("H", config[8--[[FLASH_START]]])
 		for i=1, bc do
 			cinvoke(addr, "writeSector", start+i-1, ssub(blocks[2], off, off+63))
 			off = off + 64
 		end
-	end
+	end]=]
 end
 
 --local function cfg_load()
 do
 	cfg_read(cinvoke(clist("eep")(), "getData"), config)
-	local addr = config[7]
+	--[=[local addr = config[7]
 	if addr then
 		addr = b2a(addr)
 		local st, sz = sunpack("HH", config[8--[[FLASH_START]]]..config[9--[[FLASH_SIZE]]])
 		local info = drive_read(addr, st, sz)
-		_FLASH[addr].ziptie = {start = st, size = sz}
+		--_FLASH[addr].ziptie = {start = st, size = sz}
 		cfg_read(info, config)
-	end
+	end]=]
 end
 --cfg_load()

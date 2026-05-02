@@ -11,7 +11,7 @@ end
 local net, port, screen, gpu = config[4], config[5], config[6]
 if screen then
 	gpu = cproxy(clist("gpu")())
-	gpu.bind(clist("screen")(), true)
+	gpu.bind(clist("scr")(), true)
 end
 	
 local function log(msg)
