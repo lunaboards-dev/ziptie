@@ -58,7 +58,7 @@ local function get_boot(addr, read, cap, div)
 	local parts = die_assert(osdi_decode(cinvoke(addr, read, 1)) or mtpt_decode(cinvoke(addr, read, cinvoke(addr, cap)/div)), "no partition tables")
 	for i=1, #parts do
 		local part = parts[i]
-		if part.t == "boot" or (part.t == "BOOTCODE" and ((part.f or 0) & 0x200 > 0)) then
+		if part.t == "boot" or (part.t == "BOOTCODE" and ((part.f or 0x200) & 0x200 > 0)) then
 			local buf = drive_read(addr, read, part.s, part.S)
 			return boot(buf, "(boot)", addr)
 		end
