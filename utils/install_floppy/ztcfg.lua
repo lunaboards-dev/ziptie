@@ -343,7 +343,7 @@ xpcall(function()
 		{3, "type", function(b) return b:byte()+1 end, function(v) return string.char(v-1) end},
 		{1, "address", function(b, st)
 			if kv.type == 1 then --check_dis(st, "L") then
-				return ziptie.bin2addr(b)
+				return b and ziptie.bin2addr(b) or ""
 			end
 			return b
 		end, function(b, st)

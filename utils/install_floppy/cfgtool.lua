@@ -3,7 +3,7 @@ local cfg = {}
 local function amx(s)
 	local r = #s
 	for i=1, r do
-		r = r * (sbyte(s, i)+i)+i
+		r = r * (string.byte(s, i)+i)+i
         r = (r & 0xFF) ~ (r >> 8)
     end
     return r & 0xFF
@@ -72,7 +72,7 @@ function cfg:save(...)
 		end
 	end
 	blocks[#blocks] = string.char(count) .. blocks[#blocks]
-	blocks[#block] = string.char(amx(blocks[#block])) .. blocks[#block]
+	blocks[#blocks] = string.char(amx(blocks[#blocks])) .. blocks[#blocks]
 
 	return table.unpack(blocks)
 end

@@ -9,10 +9,11 @@ end
 
 local p, id, len, t
 local function cfg_read(dat, tbl)
-	p, tbl = 4, tbl or {}
+	p, tbl = 3, tbl or {}
 	local count, ksum, dsum = sbyte(dat, 2), amx(ssub(dat, 2)), sbyte(dat, 1)
 	if not count or ksum ~= dsum then
 		_NOCFG = true
+		tbl[3] = "\0"
 		tbl[6] = clist("scr")()
 		return tbl
 	end
@@ -87,20 +88,23 @@ local function cfg_write(cfg, ...)
 end
 -- @[[else]]
 local function cfg_write(cfg)
-	local blk, count, ik, vs = blk, 0
+	local blk, count, ik, vs = "", 0
 	for k, v in pairs(cfg) do
 		count = count + 1
 		ik, k, vs = k >> 6, k & 63, #v == 1
-		k = vs and k | 128 or k
-		v = (vs and schar(ik) or "")..v
+		if vs then
+			k = k | 128
+		else
+			v = schar(#v)..v
+		end
 		if ik > 0 then
 			k = k | 64
-			ov = schar(ik) .. ov
+			v = schar(ik) .. v
 		end
-		if #blk + #ov > 254 then
+		if #blk + #v > 254 then
 			die("no space")
 		end
-		blk = schar(k) .. ov
+		blk = blk .. schar(k) .. v
 	end
 	blk = schar(count) .. blk
 	blk = schar(amx(blk)) .. blk
