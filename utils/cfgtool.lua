@@ -32,6 +32,15 @@ local args = parser:parse()
 --for k,v in pairs(args) do print(k, v) end
 --#region Defines
 
+local function amx(s)
+	local r = #s
+	for i=1, r do
+		r = r * (sbyte(s, i)+i)+i
+        r = (r & 0xFF) ~ (r >> 8)
+    end
+    return r & 0xFF
+end
+
 local function die(err, exit)
 	io.stderr:write(string.format("error: %s!\n", err))
 	os.exit(exit or 1)
@@ -191,6 +200,7 @@ local function cfg_write(cfg, ...)
 		ov = string.char(k) .. ov
 		if #blocks[pos] + #ov > args[pos]-1 then
 			blocks[pos] = string.char(count) .. blocks[pos]
+			blocks[pos] = string.char(amx(blocks[pos])) .. blocks[pos]
 			pos = pos + 1
 			count = 0
 
@@ -202,6 +212,7 @@ local function cfg_write(cfg, ...)
 		end
 	end
 	blocks[pos] = string.char(count) .. blocks[pos]
+	blocks[pos] = string.char(amx(blocks[pos])) .. blocks[pos]
 	pos = pos + 1
 	count = 0
 

@@ -87,10 +87,24 @@ local function cfg_write(cfg, ...)
 end
 -- @[[else]]
 local function cfg_write(cfg)
-	local count = 0
+	local blk, count, ik, vs = blk, 0
 	for k, v in pairs(cfg) do
-
+		count = count + 1
+		ik, k, vs = k >> 6, k & 63, #v == 1
+		k = vs and k | 128 or k
+		v = (vs and schar(ik) or "")..v
+		if ik > 0 then
+			k = k | 64
+			ov = schar(ik) .. ov
+		end
+		if #blk + #ov > 254 then
+			die("no space")
+		end
+		blk = schar(k) .. ov
 	end
+	blk = schar(count) .. blk
+	blk = schar(amx(blk)) .. blk
+	return {blk}
 end
 -- @[[end]]
 local config = {}

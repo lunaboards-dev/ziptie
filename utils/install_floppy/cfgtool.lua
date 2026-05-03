@@ -1,5 +1,14 @@
 local cfg = {}
 
+local function amx(s)
+	local r = #s
+	for i=1, r do
+		r = r * (sbyte(s, i)+i)+i
+        r = (r & 0xFF) ~ (r >> 8)
+    end
+    return r & 0xFF
+end
+
 function cfg:set(key, value)
 	self[key] = value
 end
@@ -54,6 +63,7 @@ function cfg:save(...)
 
 		if #blocks[block] + #ov > devsizes[block]-1 then
 			blocks[block] = string.char(count) .. blocks[block]
+			blocks[block] = string.char(amx(blocks[block])) .. blocks[block]
 			blocks[block+1] = ov
 			count = 0
 			assert(devsizes[block+1], "out of room for config")
@@ -62,6 +72,7 @@ function cfg:save(...)
 		end
 	end
 	blocks[#blocks] = string.char(count) .. blocks[#blocks]
+	blocks[#block] = string.char(amx(blocks[#block])) .. blocks[#block]
 
 	return table.unpack(blocks)
 end
