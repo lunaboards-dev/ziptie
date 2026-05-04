@@ -3,4 +3,4 @@
 test/*.lua
 test/floppy/
 test/
-bios.config
+/bios.config
