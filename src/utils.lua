@@ -1,3 +1,4 @@
+
 local function b2a(data)return sformat(sformat("%s-%s%s",srep(_x, 4),srep(_x.._x.."-",3),srep(_x,6)),sbyte(data, 1,#data))end
 local function a2b(addr)
 	addr=sgsub(addr, "%-", "")

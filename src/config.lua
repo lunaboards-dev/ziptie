@@ -38,7 +38,7 @@ local function cfg_read(dat, tbl)
 	return tbl
 end
 
--- @[[if false then]]
+-- @[[if cfg.get("target_kib") > 4 then]]
 local function cfg_write(cfg, ...)
 	local blocks, keys, args, pos, count = {""}, {}, {...}, 1, 0
 	for k in _pairs(cfg) do

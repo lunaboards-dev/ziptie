@@ -1,3 +1,4 @@
+require("cfg")
 local function step_print(step)
 	print("\27[1m:: "..step.."\27[0m")
 end
@@ -16,8 +17,8 @@ os.execute("mkdir test")
 
 step_print("Building BIOS")
 
-os.execute("luacomp src/init.lua -O test/debug.lua 2>/dev/null")
-os.execute("luacomp bios.lua -O ziptie.bios 2>/dev/null")
+os.execute("luacomp src/init.lua -L cfg.lua -O test/debug.lua")
+os.execute("luacomp bios.lua -L cfg.lua -O ziptie.bios 2>/dev/null")
 
 local size = getsize("ziptie.bios")
 
