@@ -41,7 +41,7 @@ end
 
 local function boot(code, path, addr)
 	function com.getBootAddress()
-		return addr or b2a(config[1]), path or config[2] --b2a(ziptie.cfg.get(1))
+		return b2a(config[1]), config[2] --b2a(ziptie.cfg.get(1))
 	end
 
 	function com.setBootAddress(addr, path)
@@ -55,6 +55,7 @@ local function boot(code, path, addr)
 	return die_assert(load(sgsub(code, "\0+$", ""), "="..path))
 end
 
+@[[if cfg.get("src_disk") or cfg.get("src_eeprom") or cfg.get("src_tape") then]]
 local function get_boot(addr, read, cap, div)
 	local parts = die_assert(osdi_decode(cinvoke(addr, read, 1)) or mtpt_decode(cinvoke(addr, read, cinvoke(addr, cap)/div)), "no partition tables")
 	for i=1, #parts do
@@ -65,3 +66,4 @@ local function get_boot(addr, read, cap, div)
 		end
 	end
 end
+@[[end]]

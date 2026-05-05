@@ -1,13 +1,20 @@
 local lzss = ...
-_FLASH = {}
+--_FLASH = {}
 --#include "src/defines.lua"
+@[[local disk_io = cfg.get("src_disk") or cfg.get("src_eeprom") or cfg.get("src_tape")]]
+@[[if disk_io then]]
 --#include "src/drive_io.lua"
+@[[end]]
 --#include "src/config.lua"
 -- #include "src/microtel/init.lua"
+@[[if disk_io then]]
 --#include "src/parts.lua"
+@[[end]]
 --#include "src/utils.lua"
 -- #include "src/extra/frequest.lua"
+@[[if cfg.get("src_net") then]]
 --#include "src/extra/frequest-min.lua"
+@[[end]]
 --#include "src/devs/init.lua"
 -- #include "src/extra/bootsel.lua"
 

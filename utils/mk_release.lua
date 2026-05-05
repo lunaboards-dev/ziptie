@@ -23,7 +23,7 @@ os.execute("luacomp bios.lua -L cfg.lua -O ziptie.bios 2>/dev/null")
 local size = getsize("ziptie.bios")
 
 print(string.format("BIOS size: \27[36m%d bytes\27[0m", size))
-if size > 4096 then
+if size > cfg.get("target_kib")*1024 then
 	io.stderr:write(string.format("\27[91mBIOS too large! (%d bytes > 4096 bytes)\27[0m\n", size//1))
 	os.exit(1)
 end

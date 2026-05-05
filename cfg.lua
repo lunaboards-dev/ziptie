@@ -1,7 +1,21 @@
 cfg = {}
 
+local luacomp = luacomp or {}
+luacomp.warning = luacomp.warning or function(v) io.stderr:write("WARNING: "..v.."\n") end
+luacomp.error = luacomp.error or function(v) io.stderr:write("ERROR: "..v.."\n") os.exit(1) end
+
 local keys = {}
-local loaded = {}
+local loaded = setmetatable({print=luacomp.warning}, {__newindex=function(self, k, v)
+    local nt, ot = type(v), type(self[k])
+    if not self[k] then
+        luacomp.error(string.format("cannot set key %s: invalid key", k))
+    end
+    if nt ~= ot then
+        luacomp.error(string.format("cannot set key %s: expected %s, got %s", k, ot, nt))
+    end
+    luacomp.warning(string.format("bios config set: %s = %s", k, tostring(v)))
+    rawset(self, k, v)
+end})
 
 function cfg.key(key, desc, default)
     table.insert(keys, {key=key, desc=desc, def=default})
@@ -26,12 +40,12 @@ local cfgok
 do
     local func, err = loadfile("bios.config", "t", loaded)
     if not func then
-        io.stderr:write("WARNING: Failed to read config: "..err.."\n")
+        luacomp.warning("WARNING: Failed to read config: "..err.."\n")
         goto fail
     end
     local ok, err = pcall(func)
     if not ok then
-        io.stderr:write("WARNING: Failed to read config: "..err.."\n")
+        luacomp.warning("WARNING: Failed to read config: "..err.."\n")
         goto fail
     end
     cfgok = true
@@ -46,4 +60,7 @@ if cfgok then
         f:write("-- Default: ",string.format("%q\n", keys[i].def))
         f:write(string.format("%s = %q\n\n", keys[i].key, loaded[keys[i].key]))
     end
+    f:close()
+else
+    luacomp.warning("Previous config error. See log.")
 end
