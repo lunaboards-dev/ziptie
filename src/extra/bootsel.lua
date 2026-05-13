@@ -16,7 +16,7 @@ local timeout = config[13] and string.unpack("f", config[13]) or 1
 				for comp in component.list() do
 					table.insert(cl, comp)
 				end
-				tbl.sort(cl)
+				table.sort(cl)
 				for j=1, math.min(#cl, 25) do
 					local cdev = cl[j]
 					local ctype = component.type(cdev)
