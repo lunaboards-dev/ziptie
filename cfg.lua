@@ -5,25 +5,26 @@ luacomp.warning = luacomp.warning or function(v) io.stderr:write("WARNING: "..v.
 luacomp.error = luacomp.error or function(v) io.stderr:write("ERROR: "..v.."\n") os.exit(1) end
 
 local keys = {}
+local settings = {}
 local loaded = setmetatable({print=luacomp.warning}, {__newindex=function(self, k, v)
-    local nt, ot = type(v), type(self[k])
-    if not self[k] then
-        luacomp.error(string.format("cannot set key %s: invalid key", k))
+    local nt, ot = type(v), type(settings[k])
+    if settings[k] == nil then
+        luacomp.error(string.format("cannot set key '%s': invalid key", k))
     end
     if nt ~= ot then
-        luacomp.error(string.format("cannot set key %s: expected %s, got %s", k, ot, nt))
+        luacomp.error(string.format("cannot set key '%s': expected %s, got %s", k, ot, nt))
     end
-    luacomp.warning(string.format("bios config set: %s = %s", k, tostring(v)))
-    rawset(self, k, v)
-end})
+    --luacomp.warning(string.format("bios config set: %s = %s", k, tostring(v)))
+    rawset(settings, k, v)
+end, __index=settings})
 
 function cfg.key(key, desc, default)
     table.insert(keys, {key=key, desc=desc, def=default})
-    rawset(loaded, key, default)
+    rawset(settings, key, default)
 end
 
 function cfg.get(key)
-    return loaded[key]
+    return settings[key]
 end
 
 cfg.key("target_kib", "Output target BIOS size in KiB.", 4)
@@ -33,8 +34,9 @@ cfg.key("src_eeprom", "Allow booting from EEPROM.", true)
 cfg.key("src_net", "Allow booting from the network.", true)
 cfg.key("src_tape", "Allow booting from tape drives.", true)
 cfg.key("split_config", "Allow splitting of the config between EEPROM and flash.", false)
-cfg.key("mini_config", "Include mini config tool.", false)
-cfg.key("better_boot_selection", "Include a better boot selection.", false)
+cfg.key("extended_bios", "Enables a built-in config tool and a better boot selection screen. Requires 8K BIOS.", false)
+--cfg.key("mini_config", "Include mini config tool.", false)
+--cfg.key("better_boot_selection", "Include a better boot selection.", false)
 
 local cfgok
 do

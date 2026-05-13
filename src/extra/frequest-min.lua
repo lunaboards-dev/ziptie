@@ -1,8 +1,8 @@
-local mdm = clist("modem")()
-local frequest = function()_error("no modem") end
+local mdm = component.list("modem")()
+local frequest = function()error("no modem") end
 if mdm then
-	local hostname = ssub(com.address(), 1, 6)
-	local modem = cproxy(mdm)
+	local hostname = computer.address():sub(1, 6)
+	local modem = computer.proxy(mdm)
 	modem.open(4096)
 	frequest = function(host, port, name)
 		local target
@@ -19,16 +19,16 @@ if mdm then
 			end
 		end
 		local function recv_pkt()
-			local deadline = cuptime()+timeout
-			while true do
-				local evt, _, _addr, _port, _, pkt_id, pkt_type, to, from, vport, data = pullsignal(deadline-cuptime())
+			local deadline = computer.uptime()+timeout
+			while 1 do
+				local evt, _, _addr, _port, _, pkt_id, pkt_type, to, from, vport, data = computer.pullSignal(deadline-computer.uptime())
 				if evt == "modem_message" and _port == 4096 and from == host and vport == port and to == hostname then
 					if pkt_type == 1 then
 						net_send(pkt_id, nil, 2, vport)
 						return data, _addr
 					end
 				end
-				if cuptime() > deadline then
+				if computer.uptime() > deadline then
 					return nil, "timeout"
 				end
 			end
@@ -36,14 +36,14 @@ if mdm then
 		--net_send(host, port, "openstream")
 		net_send("openstream")
 		port, target = recv_pkt()
-		port = _tonumber(port)
+		port = tonumber(port)
 		local close_data = recv_pkt()
 		if not close_data then die(target) end
 		--net_send(host, port, "t"..name.."\n", target, nil, 1)
 		net_send("t"..name.."\n")
 		local buffer = ""
 		local res
-		while true do
+		while 1 do
 			local dat, e = recv_pkt()
 			if not dat then die(e) end
 			if dat == close_data then
@@ -51,19 +51,19 @@ if mdm then
 			end
 			buffer = buffer .. dat
 			if not res then
-				if ssub(buffer, 1,1) ~= "y" then
+				if buffer:sub(1,1) ~= "y" then
 					net_send(close_data)
 					die("not a file!")
 				end
-				res = true
-				buffer = ssub(buffer, 2)
+				res = 1
+				buffer = buffer:sub(2)
 			end
 		end
 	end
 end
 
 local function frboot(a, b, c)
-	log(sformat("fget: %s:%d/%s", a, b, c))
+	log(string.format("fget: %s:%d/%s", a, b, c))
 	--load(frequest(a, b, c), "="..c)()
 	return boot(frequest(a, b, c), c)
 end

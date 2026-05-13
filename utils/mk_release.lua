@@ -17,14 +17,14 @@ os.execute("mkdir test")
 
 step_print("Building BIOS")
 
-os.execute("luacomp src/init.lua -L cfg.lua -O test/debug.lua")
+os.execute("luacomp src/init.lua -g -L cfg.lua -O test/debug.lua")
 os.execute("luacomp bios.lua -L cfg.lua -O ziptie.bios 2>/dev/null")
 
 local size = getsize("ziptie.bios")
 
 print(string.format("BIOS size: \27[36m%d bytes\27[0m", size))
 if size > cfg.get("target_kib")*1024 then
-	io.stderr:write(string.format("\27[91mBIOS too large! (%d bytes > 4096 bytes)\27[0m\n", size//1))
+	io.stderr:write(string.format("\27[91mBIOS too large! (%d bytes > %d bytes)\27[0m\n", size//1, cfg.get("target_kib")*1024))
 	os.exit(1)
 end
 

@@ -1,22 +1,23 @@
 --local osdi_hdr, mtpt_hdr = "<IIc8I3c13", ">c20c4II"
 local function pdecode(hdr, fields, ...)
-	local args, cv = {...}, {n=0}
+	local args, cv = {...}, {}
 	for i=1, #args, 2 do
-		tinsert(cv, {args[i], args[i+1]})
+		table.insert(cv, {table.unpack(args, i, i+1)})
+		---table.insert(cv, {select(i, ...), select(i+1, ...)})
 	end
 	return function(dat)
 		local off, out = 1, {}
 		while off < #dat do
-			local list = tbl.pack(sunpack(hdr, dat, off))
-			for i=1, #fields do list[ssub(fields, i,i)] = list[i] end
-			local nxt = tremove(list)
-			tinsert(out, list)
+			local list = {string.unpack(hdr, dat, off)}
+			for i=1, #fields do list[fields:sub(i,i)] = list[i] end
+			local nxt = table.remove(list)
+			table.insert(out, list)
 			off = nxt
 		end
-		local first = tremove(out, 1)
+		local first = table.remove(out, 1)
 		for i=1, #cv do
 			if first[cv[i][1]] ~= cv[i][2] then
-				return _nil
+				return
 			end
 		end
 		return out

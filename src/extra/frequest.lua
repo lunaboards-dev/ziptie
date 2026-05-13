@@ -16,7 +16,7 @@ local function frequest(host, port, path)
 end
 
 local function frboot(a, b, c)
-	log(sformat("fget: %s:%d/%s", a, b, c))
+	log(string.format("fget: %s:%d/%s", a, b, c))
 	--load(frequest(a, b, c), "="..c)()
 	boot(frequest(a, b, c), c)
 end

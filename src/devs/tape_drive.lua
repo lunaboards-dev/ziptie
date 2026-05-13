@@ -1,6 +1,6 @@
 function dev.tape_drive(addr)
 	log("tape: "..addr)
-	local tape = cproxy(addr)
+	local tape = component.proxy(addr)
 	local size = tape.getSize()
 	--local blks = size//512
 	local last_blk = ((size//512)-1)*512
