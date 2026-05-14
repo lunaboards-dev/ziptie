@@ -35,8 +35,9 @@ local LEN_SIZE = 1 << LEN_BITS
 local LEN_MIN = 3
 
 --------------------------------------------------------------------------------
+
 function M.compress(input)
-	local offset, output = 1, {}
+	local offset, output, len = 1, {}, #input
 	local window = ''
 
 	local function search()
@@ -44,24 +45,26 @@ function M.compress(input)
 			local str = string.sub(input, offset, offset + i - 1)
 			local pos = string.find(window, str, 1, true)
 			if pos then
-				return pos, str
+				return pos, str, i
 			end
 		end
 	end
 
-	while offset <= #input do
+	while offset <= len do
 		local flags, buffer = 0, {}
 
 		for i = 0, 7 do
-			if offset <= #input then
-				local pos, str = search()
-				if pos and #str >= LEN_MIN then
-					local tmp = ((pos - 1) << LEN_BITS) | (#str - LEN_MIN)
-					buffer[#buffer + 1] = string.pack('>I2', tmp)
+			if offset <= len then
+				local pos, str, mlen = search()
+				if pos and mlen >= LEN_MIN then
+					local back = #window-pos
+					local tmp = (back << LEN_BITS) | (mlen - LEN_MIN)
+					table.insert(buffer, (string.pack('>H', tmp)))
 				else
 					flags = flags | (1 << i)
 					str = string.sub(input, offset, offset)
-					buffer[#buffer + 1] = str
+					--buffer[#buffer + 1] = str
+					table.insert(buffer, str)
 				end
 				window = string.sub(window .. str, -POS_SIZE)
 				offset = offset + #str
@@ -71,8 +74,10 @@ function M.compress(input)
 		end
 
 		if #buffer > 0 then
-			output[#output + 1] = string.char(flags)
-			output[#output + 1] = table.concat(buffer)
+			--output[#output + 1] = string.char(flags)
+			--output[#output + 1] = table.concat(buffer)
+			table.insert(output, string.char(flags))
+			table.insert(output, table.concat(buffer))
 		end
 	end
 
